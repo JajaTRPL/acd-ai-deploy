@@ -1,0 +1,43 @@
+# Python cache
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Model files
+*.pt
+*.pth
+*.onnx
+*.engine
+*.trt
+*.mlmodel
+*.tflite
+*.pb
+
+# YOLO training outputs
+model-ai/runs/
+
+# Datasets
+data/
+model-ai/datasets/
+model-ai/datasets2/
+
+# Model weights
+model-ai/*.pt
+
+# Images sample
+model-ai/*.jpg
+model-ai/*.jpeg
+model-ai/*.png
+
+# Jupyter checkpoints
+*.ipynb_checkpoints/
+
+# Logs and temp
+*.log
+*.tmp
