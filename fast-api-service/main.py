@@ -65,13 +65,8 @@ def health():
     return {"status": "ok", "model": MODEL_PATH}
 
 
-@app.post("/predict", response_model=PredictionResponse)
+@app.post("/predict")
 async def predict(file: UploadFile = File(...)):
-    """
-    Terima 1 gambar, balikin list bounding box + class + confidence.
-    (Segmentation mask tetap dipakai di dalam model, tapi di API kita kirim bbox dulu
-    supaya JSON tidak super besar. Nanti kalau mau kirim polygon/mask bisa ditambah.)
-    """
     # --- baca file -> PIL image ---
     image_bytes = await file.read()
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
@@ -110,11 +105,31 @@ async def predict(file: UploadFile = File(...)):
                 )
             )
 
-    return PredictionResponse(
-        width=width,
-        height=height,
-        detections=detections,
-    )
+    # =====================================
+    # ➕ Tambahkan summary perhitungan class
+    # =====================================
+    sandstone_count = sum(1 for d in detections if d.class_name == "sandstone")
+    siltstone_count = sum(1 for d in detections if d.class_name == "siltstone")
+    total = len(detections)
+
+    summary = {
+        "sandstone_count": sandstone_count,
+        "siltstone_count": siltstone_count,
+        "total_instances": total,
+        "sandstone_percentage": (sandstone_count / total * 100) if total > 0 else 0,
+        "siltstone_percentage": (siltstone_count / total * 100) if total > 0 else 0,
+    }
+
+    # =====================================
+    # Return dict biasa (bukan PredictionResponse)
+    # =====================================
+    return {
+        "width": width,
+        "height": height,
+        "detections": [d.dict() for d in detections],
+        "summary": summary,
+    }
+
     
 @app.post("/predict-image")
 async def predict_image(file: UploadFile = File(...)):
