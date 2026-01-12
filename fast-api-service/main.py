@@ -31,7 +31,7 @@ app.add_middleware(
 # 2. Load model sekali di awal
 # ===========================
 # pakai model hasil trainingmu
-MODEL_PATH = "../model-ai/runs/segment/train5/weights/best.pt"
+MODEL_PATH = "../model-ai/fixModel.pt"
 model = YOLO(MODEL_PATH)
 
 # threshold hasil sweep tadi
